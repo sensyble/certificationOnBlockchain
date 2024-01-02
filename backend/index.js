@@ -3,13 +3,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const userModel = require("./model/userModel");
 const router = require("./routes/userRoutes");
+const cookieParser = require("cookie-parser")
 require("dotenv").config()
 
 const app = express();
 
 // Middleware
+app.use(cookieParser())
 app.use(express.json())
-app.use(cors());
+app.use(cors({credentials:true, origin:"http://localhost:5173"}));
 app.use("/api", router)
 
 // Connect to MongoDB

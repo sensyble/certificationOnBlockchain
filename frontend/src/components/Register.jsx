@@ -47,28 +47,35 @@ const Register = () => {
     }
   };
 
+  const sendRequest = async()=>{
+    try {
+      const res = await axios.post("http://localhost:4000/api/register", {
+        name: inputs.name,
+        username: inputs.username,
+        email: inputs.email,
+        institute_id: inputs.institute_id,
+        confirm_password: inputs.confirm_password,
+        password: inputs.password,
+        institute_role: inputs.institute_role,
+      })
+      const userData = await res.data.message;
+      return userData;
+    } catch (error) {
+      console.log("Error while sending data to backend", error.message);
+    }
+
+  }
+
 
   const handleSubmit = async(e) => {
     e.preventDefault();
 
     // check validation function to check All the feilds must be filled and password and confirm password must be same
     checkValidation();
+
+    sendRequest().then(()=>navigate("/login"))
     
-      try {
-        const res = await axios.post("http://localhost:4000/api/register", {
-          name: inputs.name,
-          username: inputs.username,
-          email: inputs.email,
-          institute_id: inputs.institute_id,
-          confirm_password: inputs.confirm_password,
-          password: inputs.password,
-          institute_role: inputs.institute_role,
-        })
-        const userData = await res.data.message;
-        return userData;
-      } catch (error) {
-        console.log("Error while sending data to backend", error.message);
-      }
+
     
     };
     
