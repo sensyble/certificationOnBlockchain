@@ -3,6 +3,7 @@ import "../styles/Register.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { authAction } from "../store";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -55,8 +56,7 @@ const Login = () => {
     // check validation function to check All the feilds must be filled and password and confirm password must be same
     checkValidation();
 
-    sendRequest().then(()=>navigate("/dashboard"))
-
+    sendRequest().then(()=>dispatch(authAction.login())).then(()=>navigate("/dashboard"))
 
   };
 
