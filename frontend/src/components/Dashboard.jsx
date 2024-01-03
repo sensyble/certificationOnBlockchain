@@ -40,6 +40,10 @@ const Dashboard = () =>{
         <div>
             <h5>Dashboard</h5>
             {userDetails && <h3>{userDetails.name}</h3>}
+
+            <div>
+                <button className="btn btn-primary">Add User</button>
+            </div>
         </div>
     )
 }

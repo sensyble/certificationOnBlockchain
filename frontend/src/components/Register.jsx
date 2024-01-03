@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../styles/Register.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
+import AddUser from "./AddUser";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -45,6 +46,8 @@ const Register = () => {
       alert("Both Password does not match");
       return;
     }
+
+    return true;
   };
 
   const sendRequest = async()=>{
@@ -71,7 +74,9 @@ const Register = () => {
     e.preventDefault();
 
     // check validation function to check All the feilds must be filled and password and confirm password must be same
-    checkValidation();
+    if(!checkValidation()){
+      return
+    }
 
     sendRequest().then(()=>navigate("/login"))
     
@@ -223,6 +228,9 @@ const Register = () => {
           </div>
         </div>
       </div>
+      {
+        <AddUser/>
+      }
     </div>
   );
 }

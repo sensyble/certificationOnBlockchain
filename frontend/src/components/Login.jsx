@@ -30,11 +30,7 @@ const Login = () => {
       return; // Stop form submission if validation fails
     }
 
-    // Check if password and confirm password match
-    // if (inputs.password !== inputs.confirm_password) {
-    //   alert("Both Password does not match");
-    //   return;
-    // }
+    return true
   };
 
   const sendRequest = async()=>{
@@ -54,7 +50,9 @@ const Login = () => {
     e.preventDefault();
 
     // check validation function to check All the feilds must be filled and password and confirm password must be same
-    checkValidation();
+    if(!checkValidation()){
+      return
+    }
 
     sendRequest().then(()=>dispatch(authAction.login())).then(()=>navigate("/dashboard"))
 

@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Register from "./components/Register";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AddUser from "./components/AddUser";
 
 function App() {
   const isLoggedIn = useSelector((state)=>state.isLoggedIn)
@@ -19,6 +20,7 @@ function App() {
           {
             isLoggedIn && <Route path="/dashboard" element={<Dashboard />}></Route>
           }
+          <Route path="/adduser" element={<AddUser/>}/>
         </Routes>
       </BrowserRouter>
     </div>
