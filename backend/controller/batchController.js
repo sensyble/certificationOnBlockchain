@@ -1,5 +1,4 @@
 const batchModel = require("../model/batchModel");
-const userModel = require("../model/userModel");
 
 const createBatch = async (req, res, next) => {
   const { batchID, startDate, endDate, batchName } = req.body;
@@ -9,33 +8,52 @@ const createBatch = async (req, res, next) => {
     startDate,
     endDate,
     batchName,
-    users: [], // I Initialize with empty array
+    users: [],
   });
 
   try {
     await newBatch.save();
-    res.status(201).json({ message: "Batch created successfully" });
+    res.status(201).json({ message: "Batch created successfully", batch: newBatch });
   } catch (error) {
     console.error("Error while creating batch:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-const addUsersToBatch = async (req, res, next) => {
-  const { batchID, usernames } = req.body;
+const getAllBatches = async (req, res, next) => {
+  try {
+    const batches = await batchModel.find();
+    res.status(200).json({ batches });
+  } catch (error) {
+    console.error("Error while fetching batches:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getBatch = async (req, res, next) => {
+  const { batchId } = req.params;
 
   try {
-    // Find user IDs based on usernames
-    const userToAdd = await userModel.find({ username: { $in: usernames } }, '_id');
-
-    if (userToAdd.length !== usernames.length) {
-      return res.status(400).json({ message: "Invalid username(s) provided" });
+    const batch = await batchModel.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ message: "Batch not found" });
     }
 
-    //update with array pushing
-    const updatedBatch = await batchModel.findOneAndUpdate(
-      { batchID },
-      { $push: { users: { $each: userToAdd } } },
+    res.status(200).json({ batch });
+  } catch (error) {
+    console.error("Error while fetching batch:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const updateBatch = async (req, res, next) => {
+  const { batchId } = req.params;
+  const { startDate, endDate, batchName } = req.body;
+
+  try {
+    const updatedBatch = await batchModel.findByIdAndUpdate(
+      batchId,
+      { startDate, endDate, batchName },
       { new: true }
     );
 
@@ -43,12 +61,29 @@ const addUsersToBatch = async (req, res, next) => {
       return res.status(404).json({ message: "Batch not found" });
     }
 
-    res.status(200).json({ message: "Users added to the batch successfully", batch: updatedBatch });
+    res.status(200).json({ message: "Batch updated successfully", batch: updatedBatch });
   } catch (error) {
-    console.error("Error while adding users to the batch:", error.message);
+    console.error("Error while updating batch:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+// Delete a batch by ID
+const deleteBatch = async (req, res, next) => {
+  const { batchId } = req.params;
 
-module.exports = { createBatch, addUserToBatch };
+  try {
+    const deletedBatch = await batchModel.findByIdAndDelete(batchId);
+
+    if (!deletedBatch) {
+      return res.status(404).json({ message: "Batch not found" });
+    }
+
+    res.status(200).json({ message: "Batch deleted successfully", batch: deletedBatch });
+  } catch (error) {
+    console.error("Error while deleting batch:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { createBatch, getAllBatches, getBatch, updateBatch, deleteBatch };
