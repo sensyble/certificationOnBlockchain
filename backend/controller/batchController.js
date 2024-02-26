@@ -68,7 +68,6 @@ const updateBatch = async (req, res, next) => {
   }
 };
 
-// Delete a batch by ID
 const deleteBatch = async (req, res, next) => {
   const { batchId } = req.params;
 
