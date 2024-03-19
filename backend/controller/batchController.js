@@ -75,21 +75,22 @@ const updateBatch = (batchId, { startDate, endDate, batchName }) => {
   });
 };
 
-const deleteBatch = (batchId) => {
-  return new Promise((resolve) => {
-    batchModel.findByIdAndDelete(batchId)
-      .then((deletedBatch) => {
-        if (!deletedBatch) {
-          resolve({ isError: true, message: "Batch not found", batch: {} });
-        } else {
-          resolve({ message: "Batch deleted successfully", batch: deletedBatch });
-        }
-      })
-      .catch((error) => {
-        console.error("Error while deleting batch:", error.message);
-        resolve({ isError: true, errors: [error.message], batch: {} });
-      });
-  });
+// Delete a batch by ID
+const deleteBatch = async (req, res, next) => {
+  const { batchId } = req.params;
+
+  try {
+    const deletedBatch = await batchModel.findByIdAndDelete(batchId);
+
+    if (!deletedBatch) {
+      return res.status(404).json({ message: "Batch not found" });
+    }
+
+    res.status(200).json({ message: "Batch deleted successfully", batch: deletedBatch });
+  } catch (error) {
+    console.error("Error while deleting batch:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 module.exports = { createBatch, getAllBatches, getBatch, updateBatch, deleteBatch };
